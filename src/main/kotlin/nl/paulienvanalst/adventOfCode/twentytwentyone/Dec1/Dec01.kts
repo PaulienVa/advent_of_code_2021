@@ -1,51 +1,34 @@
 #!/usr/bin/env kscript
 
-import nl.paulienvanalst.adventOfCode.twentytwenty.utils.Utils
+import nl.paulienvanalst.adventOfCode.twentytwentyone.utils.Utils
 
 val reportInput = Utils.readInput().map { it.toInt() }
 val nrOfInputs = reportInput.size
 
-println("Solution to part 1:")
-// imperative code
-reportInput.forEach {
-    var index = 0
-    while (index < nrOfInputs - 1 && it + reportInput[index] != 2020) {
-        index += 1
-    }
-    if (it + reportInput[index] == 2020 ) {
-        println("Found the answer! ${it * reportInput[index]} and it is equal to 494475")
+println("Working towards solution to part 1: reading $nrOfInputs lines of code")
+
+val counting = reportInput.foldIndexed(0) {
+    index, total, item -> if( index + 1 < nrOfInputs && reportInput[index + 1] > item) {
+        total + 1
+    } else {
+        total
     }
 }
 
-val valueAndDifference = reportInput.map { it to 2020 - it }.toMap()
-valueAndDifference.keys.find { it in valueAndDifference.values }.run {
-    println("Found the answer! $this and ${2020 - this!!} and it is equal to ${this * (2020 - this)}")
+println("Solution to part 1: $counting")
+
+println("Working towards solution to part 2")
+val threeMeasurements = reportInput.subList(0, nrOfInputs - 2).mapIndexed { index, item ->
+    item + reportInput[index + 1] + reportInput[index + 2]
 }
 
-println("Solution to part 2:")
+threeMeasurements.cou
 
-val sortedInput = reportInput.sorted()
-
-val halfway = nrOfInputs / 2
-
-(0 .. halfway).forEach { index ->
-    var stepUp = index + 1
-    var stepDown = nrOfInputs - 1
-
-    while (stepUp < stepDown) {
-        val sum = sortedInput[stepUp] + sortedInput[stepDown] + sortedInput[index]
-
-        if( sum == 2020) {
-            val multiply = sortedInput[stepUp] * sortedInput[stepDown] * sortedInput[index]
-            println("Outcomes params: sum $sum indexOutcome: ${sortedInput[index]} stepUpOutcome: ${sortedInput[stepUp]} stepDownOutcome: ${sortedInput[stepDown]}")
-            println("Found the answer! $multiply which is equal to 267520550")
-            break
-        }
-
-        stepDown = if (sum > 2020) stepDown - 1 else stepDown
-        stepUp = if (sum < 2020) stepUp + 1 else stepUp
-    }
+val counting2 = threeMeasurements.foldIndexed(0) {
+        index, total, item -> if(index + 1 < threeMeasurements.size && threeMeasurements[index + 1] > item) {
+    total + 1
+} else {
+    total
 }
-
-
-
+}
+println("Solution to part 2: $counting2")

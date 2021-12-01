@@ -1,6 +1,6 @@
 #!/usr/bin/env kscript
 
-import nl.paulienvanalst.adventOfCode.twentytwenty.utils.Utils
+import nl.paulienvanalst.adventOfCode.twentytwentyone.utils.Utils
 
 val input = Utils.readInput()
 
