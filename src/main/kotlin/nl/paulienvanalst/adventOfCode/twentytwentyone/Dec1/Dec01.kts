@@ -22,8 +22,6 @@ val threeMeasurements = reportInput.subList(0, nrOfInputs - 2).mapIndexed { inde
     item + reportInput[index + 1] + reportInput[index + 2]
 }
 
-threeMeasurements.cou
-
 val counting2 = threeMeasurements.foldIndexed(0) {
         index, total, item -> if(index + 1 < threeMeasurements.size && threeMeasurements[index + 1] > item) {
     total + 1
