@@ -6,21 +6,12 @@ val reportInput = Utils.readInput()
 val nrOfInputs = reportInput.size
 
 println("Working towards solution to part 1: reading $nrOfInputs lines of code")
-val gammaRate = reportInput
-    .map { it.chunked(1).map { char -> char.toInt() } }
-    .transform()
-    .map { it.mostCommon() }
+val gammaRate = reportInput.findGammaRate { mostCommon() }
 
 val gammaDecimal = gammaRate.joinToString(separator = "").toInt(2)
 println("What is the gamma rate (Decimal) $gammaDecimal")
 
-val epsilonRate = gammaRate.map {
-    return@map if(it ==  0) {
-        1
-    } else {
-        0
-    }
-}
+val epsilonRate = gammaRate.convert()
 val epsilonDecimal = epsilonRate.joinToString(separator = "").toInt(2)
 println("What is the epsilon rate (Decimal): $epsilonDecimal")
 
@@ -48,6 +39,24 @@ fun List<List<Int>>.transform() : List<IntArray> {
     return transformedArray
 }
 
+fun List<Int>.convert(): List<Int> {
+    return this.map {
+        return@map if(it ==  0) {
+            1
+        } else  if (it == 2) {
+            2
+        } else {
+            0
+        }
+    }
+}
+
+fun List<String>.findGammaRate(fn: IntArray.() -> Int): List<Int> {
+    return this.map { it.chunked(1).map { char -> char.toInt() } }
+        .transform()
+        .map { fn(it) }
+}
+
 fun IntArray.mostCommon(): Int {
     val nrOnes = this.count { it == 1 }
     val nrZeros = this.count { it == 0 }
@@ -70,58 +79,34 @@ fun IntArray.mostCommonOrEqual(): Int {
     }
 }
 
-fun IntArray.lessCommonOrEqual(): Int {
-    val nrOnes = this.count { it == 1 }
-    val nrZeros = this.count { it == 0 }
-    return if (nrZeros == nrOnes ) {
-        2
-    } else if (nrZeros < nrOnes) {
-        0
-    } else{
-        1
-    }
-}
-
 fun co2ScrubberRating(input: List<String>, indexLessCommon: Int) : List<String> {
     val bitZero = "0"
-    val epsilonRate = input
-        .map { it.chunked(1).map { char -> char.toInt() } }
-        .transform()
-        .map { it.lessCommonOrEqual() }
-
-    return if (input.size == 1 || indexLessCommon == 12) {
-        input
-    } else if(epsilonRate[indexLessCommon] == 2) {
-        co2ScrubberRating(
-            input.filter { "${it[indexLessCommon]}" == bitZero },
-            indexLessCommon + 1,
-        )
-    } else {
-        co2ScrubberRating(
-            input.filter { "${it[indexLessCommon]}" == "${epsilonRate[indexLessCommon]}"},
-            indexLessCommon + 1,
-        )
-    }
+    val epsilonRate = input.findGammaRate { mostCommonOrEqual() }.convert()
+    return findRating(input, indexLessCommon, epsilonRate, bitZero) { a: List<String>, b : Int -> co2ScrubberRating(a, b)}
 }
 
 fun oxygenRating(input: List<String>, indexMostCommon: Int) : List<String> {
     val bitOne = "1"
-    val gammaRate = input
-        .map { it.chunked(1).map { char -> char.toInt() } }
-        .transform()
-        .map { it.mostCommonOrEqual() }
+    val gammaRate = input.findGammaRate { mostCommonOrEqual() }
+    return findRating(input, indexMostCommon, gammaRate, bitOne) { a: List<String>, b : Int -> oxygenRating(a, b)}
+}
 
-    return if (input.size == 1 || indexMostCommon == 12) {
-        input
-    } else if(gammaRate[indexMostCommon] == 2) {
-        oxygenRating(
-            input.filter { "${it[indexMostCommon]}" == bitOne },
-            indexMostCommon + 1,
-        )
-    } else {
-        oxygenRating(
-            input.filter { "${it[indexMostCommon]}" == "${gammaRate[indexMostCommon]}"},
-            indexMostCommon + 1,
-        )
-    }
+fun findRating(
+    input: List<String>,
+    index: Int,
+    rate: List<Int>,
+    defaultBit: String,
+    function: (List<String>, Int) -> List<String>
+) = if (input.size == 1 || index == 12) {
+    input
+} else if (rate[index] == 2) {
+    function(
+        input.filter { "${it[index]}" == defaultBit },
+        index + 1,
+    )
+} else {
+    function(
+        input.filter { "${it[index]}" == "${rate[index]}" },
+        index + 1,
+    )
 }
