@@ -29,14 +29,14 @@ println("What is the co2Scrubber rating $co2ScrubberRating")
 val solution2 = oxygenRating * co2ScrubberRating
 println("Solution to part 2: $solution2")
 
-fun List<List<Int>>.transform() : List<IntArray> {
-    val transformedArray = List(this[0].size){ IntArray(this.size) }
+fun List<List<Int>>.transpose() : List<IntArray> {
+    val transposedArray = List(this[0].size){ IntArray(this.size) }
     for(y in 0 until this[0].size) {
         for (x in this.indices) {
-            transformedArray[y][x] = this[x][y]
+            transposedArray[y][x] = this[x][y]
         }
     }
-    return transformedArray
+    return transposedArray
 }
 
 fun List<Int>.convert(): List<Int> {
@@ -53,7 +53,7 @@ fun List<Int>.convert(): List<Int> {
 
 fun List<String>.findGammaRate(fn: IntArray.() -> Int): List<Int> {
     return this.map { it.chunked(1).map { char -> char.toInt() } }
-        .transform()
+        .transpose()
         .map { fn(it) }
 }
 
