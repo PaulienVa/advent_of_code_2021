@@ -20,11 +20,9 @@ val sumUnMarked = boards[index].flatten().filter { it !in draws }.sum()
 
 println("Solution to part 1: ${sumUnMarked * draws.last() }")
 
-
-println("Found")
-
-
-println("Solution to part 2:")
+val (draws2, index2) = findLastWinningBoard(4, listOf(), numbers, boards)
+val sumUnMarked2 = boards[index2].flatten().filter { it !in draws2 }.sum()
+println("Solution to part 2: ${sumUnMarked2 * draws2.last() }")
 
 println("Found")
 
@@ -57,4 +55,13 @@ fun findWinningBoard(isBoardFound: Boolean, indexForDraft: Int, numbers: List<In
     }
     val isBoardFound1 = boards.any { board -> isBoardWinning(board, numbers.take(indexForDraft)) }
     return findWinningBoard(isBoardFound1, indexForDraft + 1, numbers, boards)
+}
+
+fun findLastWinningBoard(indexForDraft: Int, wins: List<Int>, numbers: List<Int>, boards: List<List<List<Int>>>): Pair<List<Int>, Int> {
+    val draws = numbers.take(indexForDraft)
+    if(wins.size == boards.size) {
+        return numbers.take(indexForDraft -  1) to wins.last()
+    }
+    val winningIdices = boards.withIndex().filter { board -> board.index !in wins && isBoardWinning(board.value, draws) }.map { it.index }
+    return findLastWinningBoard(indexForDraft + 1, wins + winningIdices, numbers, boards)
 }
