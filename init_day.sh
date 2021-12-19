@@ -11,7 +11,7 @@ mkdir $dirOfDay
 
 inputFile="$dirOfDay/input.txt"
 resultsFile="$dirOfDay/results.txt"
-codeFile="$dirOfDay/Dec$day.txt"
+codeFile="$dirOfDay/Dec$day.kts"
 
 touch "$inputFile"
 touch "$resultsFile"
